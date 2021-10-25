@@ -25,5 +25,11 @@
     "BLOWUP": "burst",
     "EMOTION02": "Paying respect",
     "MINING": "Mining"
+  },
+  "AVATARMANAGE": {
+    "SAVE&UPLOAD": "Save And Upload",
+    "TRYON": "Tryon",
+    "EDIT": "Edit",
+    "NEWHUMANOID": "New Humanoid Description"
   }
 }

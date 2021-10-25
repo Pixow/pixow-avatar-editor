@@ -1,4 +1,3 @@
-const { remote } = require("electron");
 const fs = require("fs");
 const path = require("path");
 const fsa = require("fs-extra");

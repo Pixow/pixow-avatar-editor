@@ -25,5 +25,11 @@
     "BLOWUP": "爆裂",
     "EMOTION02": "请安",
     "MINING": "挖凿"
+  },
+  "AVATARMANAGE": {
+    "SAVE&UPLOAD": "保存上传",
+    "TRYON": "试穿",
+    "EDIT": "编辑",
+    "NEWHUMANOID": "新建装扮"
   }
 }
