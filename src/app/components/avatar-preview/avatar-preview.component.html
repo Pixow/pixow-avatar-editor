@@ -1,0 +1,26 @@
+<div class="avatar-preview-container">
+  <div #avatarPreview class="avatar-preview"></div>
+
+  <div class="avatar-preview__actions">
+    <p-dropdown
+      [options]="animationOptions"
+      [(ngModel)]="selectedAnimation"
+      optionLabel="label"
+      (onChange)="changeAnimation($event)"
+    ></p-dropdown>
+
+    <div class="operation-buttons">
+      <i
+        class="pi pi-flip"
+        [ngClass]="{ active: flipX === true }"
+        (click)="flip()"
+      ></i>
+      <i
+        class="pi pi-arrow-circle"
+        [ngClass]="{ active: front === true }"
+        (click)="turnAround()"
+      ></i>
+      <i class="pi pi-broom" (click)="reset()"></i>
+    </div>
+  </div>
+</div>

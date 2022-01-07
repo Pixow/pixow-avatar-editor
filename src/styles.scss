@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+
+.pi-flip {
+  background: url("./assets/flip.png") no-repeat center;
+  background-size: contain;
+}
+
+.pi-arrow-circle {
+  background: url("./assets/arrow-circle.png") no-repeat center;
+  background-size: contain;
+}
+
+.pi-broom {
+  background: url("./assets/broom.png") no-repeat center;
+  background-size: contain;
+}
+
+.pi-removebase {
+  background: url("./assets/removebase.png") no-repeat center;
+  background-size: contain;
+}
+
+button.btn {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.875em;
+  letter-spacing: 0.08em;
+  line-height: 28px;
+  text-transform: uppercase;
+  font-weight: 700;
+  background-color: #00b0ff;
+  border-radius: 4px;
+  border-bottom: 3px solid #0091ea;
+  text-align: center;
+  position: relative;
+  -webkit-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #2abdff;
+  }
+}

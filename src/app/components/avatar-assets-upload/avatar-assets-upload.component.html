@@ -1,0 +1,71 @@
+<div class="humanoid-assets-upload">
+  <p-toast position="top-center" key="tc"></p-toast>
+  <div class="humanoid-assets-upload__sidebar">
+    <input
+      type="text"
+      [(ngModel)]="humanoidDescNode.name"
+      pInputText
+      class="p-inputtext-sm"
+      placeholder="Small"
+    />
+    <avatar-preview (onTurnAround)="turnAroundHumanoidSlots()"></avatar-preview>
+    <button class="btn save-upload-btn" (click)="saveAndUpload()">
+      {{ "AVATARMANAGE.SAVE&UPLOAD" | translate }}
+    </button>
+  </div>
+  <div class="humanoid-assets-upload__rightbar">
+    <i
+      class="pi pi-question-circle"
+      [ngxTippy]="myTooltip"
+      tippyName="content"
+      [tippyProps]="{ trigger: 'click', placement: 'top' }"
+    ></i>
+    <div #myTooltip>
+      <div class="tooltip-content">
+        <p>
+          By checking the [<i class="pi pi-broom"></i>/ set empty] icon on a
+          block in the parts form meanings when a character put on this costume,
+          it will reset the checked parts first, then put on this costume.
+        </p>
+        <p>
+          By checking the [<i class="pi pi-removebase"></i>/ remove base] icon
+          on a block in the parts form meanings when a character put on this
+          costume, it will remove any costumes on the part, including its base
+          texture, then put on this costume
+        </p>
+      </div>
+    </div>
+    <ng-container *ngIf="slotConfigs">
+      <ng-container *ngIf="isFront; else backSlots">
+        <div class="humanoid-assets-upload__content content-front">
+          <ng-container *ngFor="let config of frontSlotConfigs">
+            <ng-container *ngIf="!config.isHidden">
+              <avatar-slot
+                [slotConfig]="config"
+                (onAssetSelect)="handleSlotAssetSelect($event)"
+                (onRemove)="handleSlotTakeoff($event)"
+                (onEmptyOverride)="handleEmptyOverride($event)"
+                (onRemoveBase)="handleRemoveBase($event)"
+              ></avatar-slot>
+            </ng-container>
+          </ng-container>
+        </div>
+      </ng-container>
+      <ng-template #backSlots>
+        <div class="humanoid-assets-upload__content content-back">
+          <ng-container *ngFor="let config of backSlotConfigs">
+            <ng-container *ngIf="!config.isHidden">
+              <avatar-slot
+                [slotConfig]="config"
+                (onAssetSelect)="handleSlotAssetSelect($event)"
+                (onRemove)="handleSlotTakeoff($event)"
+                (onEmptyOverride)="handleEmptyOverride($event)"
+                (onRemoveBase)="handleRemoveBase($event)"
+              ></avatar-slot>
+            </ng-container>
+          </ng-container>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>

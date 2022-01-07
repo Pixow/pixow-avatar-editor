@@ -1,0 +1,34 @@
+<div class="humanoid-slot-container" #humanoidSlot>
+  <ng-container *ngIf="hasAssets; else upload">
+    <div class="image-preview">
+      <img #slotPreview />
+    </div>
+  </ng-container>
+  <ng-template #upload>
+    <p-fileUpload
+      mode="basic"
+      name="myfile[]"
+      accept="image/*"
+      [maxFileSize]="1000000"
+      chooseLabel="{{ slotConfig.name }}"
+      (onSelect)="selectFile($event)"
+    >
+    </p-fileUpload>
+  </ng-template>
+
+  <div class="slot-operations">
+    <i
+      class="pi pi-broom"
+      *ngIf="!hasAssets"
+      [ngClass]="{ active: isEmptyOverride() }"
+      (click)="toggleEmptyOverride()"
+    ></i>
+    <i
+      class="pi pi-removebase"
+      *ngIf="hasRemoveBase()"
+      [ngClass]="{ active: isRemoveBase() }"
+      (click)="toggleRemoveBase()"
+    ></i>
+    <i class="pi pi-times" (click)="takeoffSlot()"></i>
+  </div>
+</div>

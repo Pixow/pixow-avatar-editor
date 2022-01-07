@@ -1,0 +1,35 @@
+{
+  "AVATARPREVIEW": {
+    "PREVIEW": "效果预览",
+    "FRONT": "正面",
+    "BACK": "反面",
+    "RESET": "重置形象",
+    "IDLE": "待机",
+    "WALK": "行走",
+    "RUN": "奔跑",
+    "ATTACK": "攻击",
+    "JUMP": "跳跃",
+    "INJURED": "受击",
+    "FALLDOWN": "倒地",
+    "DANCE01": "摆手舞",
+    "DANCE02": "敲敲舞",
+    "FISHING": "垂钓",
+    "GREET": "招手",
+    "SIT": "坐姿",
+    "LIE": "仰卧",
+    "EMOTION01": "抓狂",
+    "SHOOTERIDLE": "待机（持枪）",
+    "SHOOTERWALK": "行走（持枪）",
+    "SHOOTERRUN": "奔跑（持枪）",
+    "SHOOT": "射击（持枪）",
+    "BLOWUP": "爆裂",
+    "EMOTION02": "请安",
+    "MINING": "挖凿"
+  },
+  "AVATARMANAGE": {
+    "SAVE&UPLOAD": "保存上传",
+    "TRYON": "试穿",
+    "EDIT": "编辑",
+    "NEWAVATAR": "新建装扮"
+  }
+}

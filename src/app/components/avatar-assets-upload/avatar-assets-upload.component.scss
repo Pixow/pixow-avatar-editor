@@ -1,0 +1,58 @@
+.humanoid-assets-upload {
+  display: flex;
+  justify-content: space-between;
+
+  &__sidebar {
+    width: 260px;
+    margin-right: 10px;
+
+    input {
+      width: 100%;
+      height: 30px;
+      margin-bottom: 10px;
+    }
+
+    avatar-preview {
+      width: 100%;
+    }
+
+    .save-upload-btn {
+      width: 100%;
+      height: 30px;
+      margin-top: 10px;
+    }
+  }
+
+  &__rightbar {
+    position: relative;
+    width: 600px;
+
+    .pi-question-circle {
+      font-size: 30px;
+      cursor: pointer;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 10;
+    }
+
+    .humanoid-assets-upload__content {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      background: url("~src/assets/body.png") no-repeat center;
+    }
+  }
+}
+
+.tooltip-content {
+  p {
+    margin-top: 10px;
+    line-height: 20px;
+
+    i {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

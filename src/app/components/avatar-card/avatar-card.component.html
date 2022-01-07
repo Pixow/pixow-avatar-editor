@@ -1,0 +1,24 @@
+<div class="avatar-card">
+  <figure>
+    <img [src]="avatarCover$ | async" />
+  </figure>
+  <div class="avatar-card__desc">
+    <h1>{{ avatar.name }}</h1>
+    <div class="avatar-card__info">
+      <div class="avatar-card__author">
+        <span>{{ avatar.owner.nickname }}</span>
+        <i></i>
+        <span>{{ avatar.createdAt | dateAgo }}</span>
+      </div>
+    </div>
+    <h3>{{ avatar.type }}</h3>
+  </div>
+  <div class="avatar-card__options">
+    <button class="btn avatar-card-btn" (click)="tryDressup()">
+      {{ "AVATARMANAGE.TRYON" | translate }}
+    </button>
+    <button class="btn avatar-card-btn" (click)="editHumanoid()">
+      {{ "AVATARMANAGE.EDIT" | translate }}
+    </button>
+  </div>
+</div>

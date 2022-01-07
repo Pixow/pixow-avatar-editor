@@ -1,0 +1,80 @@
+::ng-deep .p-fileupload {
+  width: 100%;
+  height: 100%;
+
+  .p-fileupload-choose {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 1px solid #ccc;
+
+    &:hover {
+      background: transparent;
+      border-color: #00b0ff;
+
+      .p-button-label {
+        color: #00b0ff;
+      }
+    }
+
+    .p-button-icon-left {
+      display: none;
+    }
+
+    .p-button-label {
+      color: #ccc;
+    }
+  }
+}
+
+.humanoid-slot-container {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 3px;
+
+  .slot-operations {
+    visibility: hidden;
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    display: flex;
+    i {
+      cursor: pointer;
+      margin-left: 5px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+
+      &.active {
+        border: 2px solid lightskyblue;
+      }
+    }
+
+    i.pi-times {
+      font-size: 26px;
+      line-height: 20px;
+    }
+  }
+
+  &:hover {
+    .slot-operations {
+      visibility: visible;
+    }
+  }
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  img {
+    border: 1px solid #ccc;
+    width: 100%;
+    height: 100%;
+    object-fit: none;
+  }
+}

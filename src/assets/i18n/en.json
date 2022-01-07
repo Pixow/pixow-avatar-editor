@@ -1,0 +1,35 @@
+{
+  "AVATARPREVIEW": {
+    "PREVIEW": "Preview",
+    "FRONT": "Front",
+    "BACK": "Back",
+    "RESET": "Reset",
+    "IDLE": "Idle",
+    "WALK": "Walking",
+    "RUN": "Running",
+    "ATTACK": "Attacking",
+    "JUMP": "Jumping",
+    "INJURED": "Injured",
+    "FALLDOWN": "Fall down",
+    "DANCE01": "Waving Dance",
+    "DANCE02": "Knocking Dance",
+    "FISHING": "Fishing",
+    "GREET": "Greeting",
+    "SIT": "Sitting",
+    "LIE": "Lying",
+    "EMOTION01": "Go berserk",
+    "SHOOTERIDLE": "Shooting(Idle)",
+    "SHOOTERWALK": "Shooting(Walk)",
+    "SHOOTERRUN": "Shooting(Run)",
+    "SHOOT": "Shooting",
+    "BLOWUP": "burst",
+    "EMOTION02": "Paying respect",
+    "MINING": "Mining"
+  },
+  "AVATARMANAGE": {
+    "SAVE&UPLOAD": "Save And Upload",
+    "TRYON": "Tryon",
+    "EDIT": "Edit",
+    "NEWAVATAR": "New Humanoid Description"
+  }
+}

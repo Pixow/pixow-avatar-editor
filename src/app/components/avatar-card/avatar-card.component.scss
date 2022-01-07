@@ -1,0 +1,86 @@
+.avatar-card {
+  box-sizing: content-box;
+  width: 170px;
+  height: 246px;
+  border: 1px solid #d5d5d5;
+  padding: 9px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+
+  figure {
+
+    width: 100%;
+    height: 120px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: aliceblue;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: none;
+    }
+  }
+
+  .avatar-card__desc {
+
+
+    h1 {
+      font-size: 1em;
+      margin: 12px 0 5px 0;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #49555c;
+      white-space: nowrap;
+    }
+
+    .avatar-card__info {
+      display: flex;
+      justify-content: space-between;
+      .avatar-card__author {
+        display: flex;
+        align-items: center;
+        span {
+          color: gray;
+          font-family: "Roboto",sans-serif;
+          font-size: 0.875em;
+          line-height: 1.71429em;
+          font-weight: 300;
+          white-space: nowrap;
+        }
+
+        i {
+          display: block;
+          width: 4px;
+          height: 4px;
+          border-radius: 4px;
+          margin: 0 5px 0 5px;
+          background-color: gray;
+        }
+      }
+    }
+
+    h3 {
+      letter-spacing: 0.08em;
+      color: #00b0ff;
+      font-family: "Montserrat",sans-serif;
+      font-size: 0.8em;
+      line-height: 25px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+  }
+
+  .avatar-card__options {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+    justify-content: space-between;
+
+    button.avatar-card-btn {
+      width: 76px;
+      height: 30px;
+    }
+  }
+}
