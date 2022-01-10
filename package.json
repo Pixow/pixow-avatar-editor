@@ -23,6 +23,7 @@
     "@ngx-translate/http-loader": "^7.0.0",
     "image-to-blob": "^0.2.0",
     "ngx-tippy-wrapper": "^4.0.1",
+    "pixowor-core": "../pixowor-core/dist/pixowor-core/pixowor-core-0.0.2.tgz",
     "primeflex": "^3.1.2",
     "primeicons": "^5.0.0",
     "primeng": "^13.0.4",

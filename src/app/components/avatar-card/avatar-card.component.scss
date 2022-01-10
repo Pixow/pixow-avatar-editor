@@ -8,7 +8,6 @@
   margin-bottom: 10px;
 
   figure {
-
     width: 100%;
     height: 120px;
     margin-bottom: 15px;
@@ -23,8 +22,6 @@
   }
 
   .avatar-card__desc {
-
-
     h1 {
       font-size: 1em;
       margin: 12px 0 5px 0;
@@ -43,7 +40,7 @@
         align-items: center;
         span {
           color: gray;
-          font-family: "Roboto",sans-serif;
+          font-family: "Roboto", sans-serif;
           font-size: 0.875em;
           line-height: 1.71429em;
           font-weight: 300;
@@ -64,7 +61,7 @@
     h3 {
       letter-spacing: 0.08em;
       color: #00b0ff;
-      font-family: "Montserrat",sans-serif;
+      font-family: "Montserrat", sans-serif;
       font-size: 0.8em;
       line-height: 25px;
       font-weight: 700;
@@ -83,4 +80,9 @@
       height: 30px;
     }
   }
+}
+
+.BackgroundImage {
+  width: 100%;
+  height: 100px;
 }

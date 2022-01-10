@@ -16,8 +16,8 @@ import {
   AvatarEditorEmitType,
   EditorCanvasManager,
   EditorCanvasType,
-} from '@PixelPai/game-core/editor';
-import { HumanoidSlot } from '@PixelPai/game-core/structure';
+  HumanoidSlot,
+} from '@PixelPai/game-core';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({

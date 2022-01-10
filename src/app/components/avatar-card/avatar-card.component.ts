@@ -6,8 +6,10 @@ import {
   Inject,
   Input,
   NgZone,
+  OnDestroy,
   Output,
 } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ImageService } from 'pixowor-core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Observable, of } from 'rxjs';
@@ -15,35 +17,42 @@ import { AppService } from 'src/app/app.service';
 import { AvatarModel } from 'src/app/models/avatar.model';
 // import { HumanoidCard } from 'src/app/app.service';
 import { AvatarAssetsUploadComponent } from '../avatar-assets-upload/avatar-assets-upload.component';
-const urlResolve = require('url-resolve-browser');
 
 @Component({
   selector: 'avatar-card',
   templateUrl: './avatar-card.component.html',
   styleUrls: ['./avatar-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DialogService],
 })
-export class AvatarCardComponent implements AfterViewInit {
+export class AvatarCardComponent implements AfterViewInit, OnDestroy {
   @Input() avatar: AvatarModel;
 
   @Output() onDressup = new EventEmitter();
 
   avatarCover$: Observable<string>;
 
+  private imgObjectUrl: string;
+
   constructor(
     public dialogService: DialogService,
     public appService: AppService,
     public imageService: ImageService,
+    public sanitizer: DomSanitizer,
     public zone: NgZone
   ) {}
 
+  get avatarCoverUrl() {
+    return `https://osd-alpha.tooqing.com/${this.avatar.cover}`;
+  }
+
   async ngAfterViewInit() {
-    this.avatarCover$ = of(
-      await this.imageService.getImage(
-        `https://osd-alpha.tooqing.com/${this.avatar.cover}`
-      )
+    this.imgObjectUrl = await this.imageService.getImage(this.avatarCoverUrl);
+
+    const safeImgUrl: any = this.sanitizer.bypassSecurityTrustUrl(
+      this.imgObjectUrl
     );
+
+    this.avatarCover$ = of(safeImgUrl);
   }
 
   tryDressup(): void {
@@ -82,5 +91,9 @@ export class AvatarCardComponent implements AfterViewInit {
     //       },
     //     });
     //   });
+  }
+
+  ngOnDestroy(): void {
+    URL.revokeObjectURL(this.imgObjectUrl);
   }
 }

@@ -50,7 +50,8 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "image-to-blob",
-              "url-resolve-browser"
+              "url-resolve-browser",
+              "@PixelPai/game-core"
             ]
           },
           "configurations": {
