@@ -43,3 +43,14 @@ button.btn {
     background-color: #2abdff;
   }
 }
+
+button.error-btn {
+  @extend .btn;
+
+  background-color: #dc3545;
+  border-bottom: 3px solid #c42e3d;
+
+  &:hover {
+    background-color: #f04859;
+  }
+}

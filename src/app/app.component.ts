@@ -3,6 +3,7 @@ import {
   Component,
   ComponentRef,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -21,7 +22,7 @@ import {
   catchError,
   of,
 } from 'rxjs';
-import { map, switchMap, timeout } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { AvatarModel } from './models/avatar.model';
 import { AppService, GetAvatarsResponse } from './app.service';
 import { SearchAvatarsParams } from 'pixow-api';
@@ -37,7 +38,7 @@ interface SortOption {
   styleUrls: ['./app.component.scss'],
   providers: [DialogService],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   loadLangSuccess = false;
 
   keyword = '';
@@ -48,6 +49,7 @@ export class AppComponent implements OnInit {
     keyword: this.keyword,
     page: this.page,
     pageSize: this.pageSize,
+    tags: ['humanoid'],
   });
 
   total = 0;
@@ -64,15 +66,18 @@ export class AppComponent implements OnInit {
 
   type: string; // avatar type
 
+  destroy$ = new Subject<boolean>();
+
   @ViewChild(AvatarPreviewComponent) avatarPreview: AvatarPreviewComponent;
 
   constructor(
     private translate: TranslateService,
     private appService: AppService,
+    private messageService: MessageService,
     private dialog: DialogService
   ) {
-    this.translate.setDefaultLang('zh-CN');
-    this.translate.use('zh-CN').subscribe((data) => {
+    this.translate.setDefaultLang('en');
+    this.translate.use('en').subscribe((data) => {
       this.loadLangSuccess = true;
     });
   }
@@ -83,6 +88,15 @@ export class AppComponent implements OnInit {
   }
 
   private setupDataListenners() {
+    this.appService.refreshTrigger$
+      .asObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        if (data) {
+          this.loadData();
+        }
+      });
+
     this.avatarsResponse$ = this.queries$.pipe(
       map((query: SearchAvatarsParams) => {
         console.log(query);
@@ -162,17 +176,19 @@ export class AppComponent implements OnInit {
   }
 
   loadData(): void {
-    this.queries$.next({
-      page: this.page,
-      pageSize: this.pageSize,
-      keyword: this.keyword,
-      ...(this.selectedSortOption && {
-        sorts: [this.selectedSortOption.value],
-      }),
-      ...(this.type && {
-        type: this.type,
-      }),
-    });
+    this.queries$.next(
+      Object.assign(this.queries$.getValue(), {
+        page: this.page,
+        pageSize: this.pageSize,
+        keyword: this.keyword,
+        ...(this.selectedSortOption && {
+          sorts: [this.selectedSortOption.value],
+        }),
+        ...(this.type && {
+          type: this.type,
+        }),
+      })
+    );
   }
 
   filterByType(value: string): void {
@@ -198,12 +214,27 @@ export class AppComponent implements OnInit {
     const capsule = new Capsule();
     const humanoidDescNode = new HumanoidDescriptionNode(capsule);
     console.log('humanoidDescNode: ', humanoidDescNode);
-    this.dialog.open(AvatarAssetsUploadComponent, {
+    const dialogRef = this.dialog.open(AvatarAssetsUploadComponent, {
       header: 'Create Avatar',
       width: '920px',
       data: {
         humanoidDescNode,
       },
     });
+
+    dialogRef.onClose.subscribe((data) => {
+      if (data == true) {
+        this.loadData();
+        this.messageService.add({
+          severity: 'success',
+          detail: 'Sava and upload success!',
+        });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

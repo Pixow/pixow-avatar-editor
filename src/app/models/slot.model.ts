@@ -6,8 +6,8 @@ export interface SlotConfig {
   version: string;
   limitImageWidth: number;
   limitImageHeight: number;
-  top: number;
-  left: number;
+  top: number; // avatar slot position: top
+  left: number; // avatar slot position: left
   imageBlob?: Blob;
   emptyOverride?: boolean | null;
   removeBase?: boolean | null;

@@ -1,5 +1,4 @@
 <div class="avatar-assets-upload">
-  <p-toast position="top-center" key="tc"></p-toast>
   <div class="avatar-assets-upload__sidebar">
     <input
       type="text"
@@ -12,7 +11,11 @@
     <button class="btn save-upload-btn" (click)="saveAndUpload()">
       {{ "AVATARMANAGE.SAVE&UPLOAD" | translate }}
     </button>
-    <button class="btn delete-avatar" *ngIf="humanoidDescNode.sn">
+    <button
+      class="error-btn delete-avatar-btn"
+      *ngIf="humanoidDescNode.sn"
+      (click)="deleteAvatar()"
+    >
       {{ "AVATARMANAGE.DELETE" | translate }}
     </button>
   </div>

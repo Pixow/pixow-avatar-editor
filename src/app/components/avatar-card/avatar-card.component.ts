@@ -51,7 +51,16 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
     return urlResolve(this.webResourceUri, this.avatar.cover);
   }
 
+  get avatarConfigFileUrl() {
+    return new URL(
+      `avatar/${this.avatar._id}/${this.avatar.version}/${this.avatar._id}.pi`,
+      this.webResourceUri
+    ).toString();
+  }
+
   async ngAfterViewInit() {
+    console.log('avatar: ', this.avatar);
+
     this.imgObjectUrl = await this.fileService.getImageUrl(this.avatarCoverUrl);
 
     const safeImgUrl: any = this.sanitizer.bypassSecurityTrustUrl(
@@ -62,45 +71,45 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
   }
 
   tryDressup(): void {
-    // const humanoidFileUrl = urlResolve(
-    //   this.pixoworCore.settings.WEB_RESOURCE_URI,
-    //   `avatar/${this.humanoidCard._id}/${this.humanoidCard.version}/${this.humanoidCard._id}.humanoid`
-    // );
-    // fetch(humanoidFileUrl)
-    //   .then((res) => res.arrayBuffer())
-    //   .then((buffer) => {
-    //     const message = HumanoidDescriptionNode.decode(new Uint8Array(buffer));
-    //     const humanoidDescNode = new HumanoidDescriptionNode();
-    //     humanoidDescNode.deserialize(message);
-    //     console.log('humanoidDescNode: ', humanoidDescNode);
-    //     this.onDressup.emit(humanoidDescNode.slots);
-    //   });
-  }
-
-  editAvatar(): void {
-    const humanoidFileUrl = urlResolve(
-      this.webResourceUri,
-      `avatar/${this.avatar._id}/${this.avatar.version}/${this.avatar._id}.pi`
-    );
-
     this.fileService
-      .getFileArrayBuffer(humanoidFileUrl)
+      .getFileArrayBuffer(this.avatarConfigFileUrl)
       .then((buffer) => {
         const message = HumanoidDescriptionNode.decode(new Uint8Array(buffer));
         const capsule = new Capsule();
         const humanoidDescNode = new HumanoidDescriptionNode(capsule);
         humanoidDescNode.deserialize(message);
-        console.log('humanoidDescNode: ', humanoidDescNode);
-        const ref = this.dialogService.open(AvatarAssetsUploadComponent, {
+        this.onDressup.emit(humanoidDescNode.slots);
+      });
+  }
+
+  editAvatar(): void {
+    this.fileService
+      .getFileArrayBuffer(this.avatarConfigFileUrl)
+      .then((buffer) => {
+        const message = HumanoidDescriptionNode.decode(new Uint8Array(buffer));
+        const capsule = new Capsule();
+        const humanoidDescNode = new HumanoidDescriptionNode(capsule);
+        humanoidDescNode.deserialize(message);
+
+        const dialogRef = this.dialogService.open(AvatarAssetsUploadComponent, {
           header: 'Edit Avatar',
-          width: '70%',
+          width: '920px',
           data: {
             humanoidDescNode,
           },
         });
+
+        dialogRef.onClose.subscribe((data) => {
+          if (data == true) {
+            this.appService.refreshTrigger$.next(true);
+            this.messageService.add({
+              severity: 'success',
+              detail: 'Sava and upload success!',
+            });
+          }
+        });
       })
       .catch((err) => {
-        console.log(err);
         this.messageService.add({ severity: 'error', detail: err.message });
       });
   }

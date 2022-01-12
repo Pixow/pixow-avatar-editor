@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { HumanoidSlot } from '@PixelPai/game-core/structure';
 // import { HumanoidDescriptionNode } from 'game-capsule';
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subscription } from 'rxjs';
 import { AvatarPreviewComponent } from '../avatar-preview/avatar-preview.component';
 import { MessageService } from 'primeng/api';
@@ -34,7 +34,6 @@ export enum AvatarDir {
   selector: 'avatar-assets-upload',
   templateUrl: './avatar-assets-upload.component.html',
   styleUrls: ['./avatar-assets-upload.component.scss'],
-  providers: [MessageService],
 })
 export class AvatarAssetsUploadComponent
   implements OnInit, AfterViewInit, OnDestroy
@@ -61,6 +60,7 @@ export class AvatarAssetsUploadComponent
   }
 
   constructor(
+    private dialogRef: DynamicDialogRef,
     public config: DynamicDialogConfig,
     private messageService: MessageService,
     public cd: ChangeDetectorRef,
@@ -216,7 +216,7 @@ export class AvatarAssetsUploadComponent
 
   public saveAndUpload(): void {
     // 1. 保存数据到平台
-    this.saveToDB()
+    this.recordAvatarMetaData()
       .then((humanoid) => {
         // 2. 序列化humanoid文件并上传
         return this.serializeAndUploadHumanoid();
@@ -230,18 +230,17 @@ export class AvatarAssetsUploadComponent
         return this.generateAvatarThumbnailAndUpload();
       })
       .then(() => {
-        this.messageService.add({
-          key: 'tc',
-          severity: 'success',
-          detail: 'Sava and upload success!',
-        });
+        this.dialogRef.close(true);
+      })
+      .catch((err) => {
+        this.messageService.add({ severity: 'error', detail: err.message });
       });
   }
 
   // 平台数据接口
   // 1. 更新Avatar
   // 2. 创建Avatar
-  private saveToDB(): Promise<any> {
+  private recordAvatarMetaData(): Promise<any> {
     if (this.humanoidDescNode.sn) {
       this.nextVersion = +this.humanoidDescNode.version + 1;
       return new Promise((resolve, reject) => {
@@ -263,6 +262,7 @@ export class AvatarAssetsUploadComponent
           .createAvatar({
             name: this.humanoidDescNode.name,
             version: 1,
+            tags: ['humanoid'],
             type: 'other', // TODO: dont need this type
           })
           .then((res) => {
@@ -349,7 +349,7 @@ export class AvatarAssetsUploadComponent
   // 生成封面图，并上传
   public generateAvatarThumbnailAndUpload(): Promise<any> {
     return this.avatarPreview.canvas.generateThumbnail().then((imageData) => {
-      const key = `avatar/${this.humanoidDescNode.sn}/${this.humanoidDescNode.version}/thumbnail.png`;
+      const key = `avatar/${this.humanoidDescNode.sn}/${this.humanoidDescNode.version}/stand.png`;
 
       const thumbnailUploadFileConfig = {
         key,
@@ -357,6 +357,12 @@ export class AvatarAssetsUploadComponent
       };
 
       return this.cloudStorageService.uploadFile(thumbnailUploadFileConfig);
+    });
+  }
+
+  public deleteAvatar() {
+    this.pixowApi.deleteAvatars([this.humanoidDescNode.sn]).then(() => {
+      this.messageService.add({ severity: 'success', detail: '删除成功' });
     });
   }
 

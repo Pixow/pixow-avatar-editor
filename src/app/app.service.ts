@@ -20,6 +20,8 @@ export interface GetAvatarsResponse {
   providedIn: 'root',
 })
 export class AppService {
+  public refreshTrigger$ = new BehaviorSubject(false);
+
   constructor(private pixowApi: PixowApi) {}
 
   getAvatars(query?: SearchAvatarsParams): Observable<GetAvatarsResponse> {

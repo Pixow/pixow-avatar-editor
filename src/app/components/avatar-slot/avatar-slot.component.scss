@@ -41,6 +41,8 @@
     bottom: 5px;
     left: 0;
     display: flex;
+    align-items: center;
+
     i {
       cursor: pointer;
       margin-left: 5px;
@@ -54,8 +56,7 @@
     }
 
     i.pi-times {
-      font-size: 26px;
-      line-height: 20px;
+      font-size: 18px;
     }
   }
 

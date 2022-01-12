@@ -35,8 +35,6 @@ export class AvatarModel implements Avatar {
     this.version = data.version;
     this.avatar_slot = data.avatar_slot;
 
-    this.cover = data.version
-      ? `avatar/part/${this._id}/${this.version}/thumbnail.png`
-      : `avatar/part/${this._id}/stand.png`;
+    this.cover = `avatar/${this._id}/${this.version}/stand.png`;
   }
 }
