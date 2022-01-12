@@ -10,13 +10,17 @@ import {
   Output,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ImageService } from 'pixowor-core';
+import { Capsule, HumanoidDescriptionNode } from 'game-capsule';
+import { FileService } from 'pixowor-core';
+import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Observable, of } from 'rxjs';
+import { WEB_RESOURCE_URI } from 'src/app/app.module';
 import { AppService } from 'src/app/app.service';
 import { AvatarModel } from 'src/app/models/avatar.model';
 // import { HumanoidCard } from 'src/app/app.service';
 import { AvatarAssetsUploadComponent } from '../avatar-assets-upload/avatar-assets-upload.component';
+const urlResolve = require('url-resolve-browser');
 
 @Component({
   selector: 'avatar-card',
@@ -36,17 +40,19 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
   constructor(
     public dialogService: DialogService,
     public appService: AppService,
-    public imageService: ImageService,
+    public fileService: FileService,
     public sanitizer: DomSanitizer,
-    public zone: NgZone
+    public messageService: MessageService,
+    public zone: NgZone,
+    @Inject(WEB_RESOURCE_URI) private webResourceUri: string
   ) {}
 
   get avatarCoverUrl() {
-    return `https://osd-alpha.tooqing.com/${this.avatar.cover}`;
+    return urlResolve(this.webResourceUri, this.avatar.cover);
   }
 
   async ngAfterViewInit() {
-    this.imgObjectUrl = await this.imageService.getImage(this.avatarCoverUrl);
+    this.imgObjectUrl = await this.fileService.getImageUrl(this.avatarCoverUrl);
 
     const safeImgUrl: any = this.sanitizer.bypassSecurityTrustUrl(
       this.imgObjectUrl
@@ -71,26 +77,32 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
     //   });
   }
 
-  editHumanoid(): void {
-    // const humanoidFileUrl = urlResolve(
-    //   this.pixoworCore.settings.WEB_RESOURCE_URI,
-    //   `avatar/${this.humanoidCard._id}/${this.humanoidCard.version}/${this.humanoidCard._id}.humanoid`
-    // );
-    // fetch(humanoidFileUrl)
-    //   .then((res) => res.arrayBuffer())
-    //   .then((buffer) => {
-    //     const message = HumanoidDescriptionNode.decode(new Uint8Array(buffer));
-    //     const humanoidDescNode = new HumanoidDescriptionNode();
-    //     humanoidDescNode.deserialize(message);
-    //     console.log('humanoidDescNode: ', humanoidDescNode);
-    //     const ref = this.dialogService.open(AvatarAssetsUploadComponent, {
-    //       header: 'Edit Avatar',
-    //       width: '70%',
-    //       data: {
-    //         humanoidDescNode,
-    //       },
-    //     });
-    //   });
+  editAvatar(): void {
+    const humanoidFileUrl = urlResolve(
+      this.webResourceUri,
+      `avatar/${this.avatar._id}/${this.avatar.version}/${this.avatar._id}.pi`
+    );
+
+    this.fileService
+      .getFileArrayBuffer(humanoidFileUrl)
+      .then((buffer) => {
+        const message = HumanoidDescriptionNode.decode(new Uint8Array(buffer));
+        const capsule = new Capsule();
+        const humanoidDescNode = new HumanoidDescriptionNode(capsule);
+        humanoidDescNode.deserialize(message);
+        console.log('humanoidDescNode: ', humanoidDescNode);
+        const ref = this.dialogService.open(AvatarAssetsUploadComponent, {
+          header: 'Edit Avatar',
+          width: '70%',
+          data: {
+            humanoidDescNode,
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.messageService.add({ severity: 'error', detail: err.message });
+      });
   }
 
   ngOnDestroy(): void {

@@ -8,10 +8,10 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { HumanoidSlot } from '@PixelPai/game-core/structure';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AvatarPreviewComponent } from 'src/app/components/avatar-preview/avatar-preview.component';
-// import { HumanoidDescriptionNode } from 'game-capsule';
+import { Capsule, HumanoidDescriptionNode } from 'game-capsule';
 import { AvatarAssetsUploadComponent } from 'src/app/components/avatar-assets-upload/avatar-assets-upload.component';
 import {
   BehaviorSubject,
@@ -194,13 +194,16 @@ export class AppComponent implements OnInit {
 
   public createAvatar(): void {
     // Use HumanoidDescriptionNode or AvatarNode
-    // const humanoidDescNode = new HumanoidDescriptionNode();
-    // this.dialog.open(AvatarAssetsUploadComponent, {
-    //   header: 'Create Humanoid Description',
-    //   width: '70%',
-    //   data: {
-    //     humanoidDescNode,
-    //   },
-    // });
+
+    const capsule = new Capsule();
+    const humanoidDescNode = new HumanoidDescriptionNode(capsule);
+    console.log('humanoidDescNode: ', humanoidDescNode);
+    this.dialog.open(AvatarAssetsUploadComponent, {
+      header: 'Create Avatar',
+      width: '920px',
+      data: {
+        humanoidDescNode,
+      },
+    });
   }
 }

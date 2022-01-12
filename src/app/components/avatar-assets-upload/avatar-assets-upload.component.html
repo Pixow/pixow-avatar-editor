@@ -1,6 +1,6 @@
-<div class="humanoid-assets-upload">
+<div class="avatar-assets-upload">
   <p-toast position="top-center" key="tc"></p-toast>
-  <div class="humanoid-assets-upload__sidebar">
+  <div class="avatar-assets-upload__sidebar">
     <input
       type="text"
       [(ngModel)]="humanoidDescNode.name"
@@ -12,8 +12,11 @@
     <button class="btn save-upload-btn" (click)="saveAndUpload()">
       {{ "AVATARMANAGE.SAVE&UPLOAD" | translate }}
     </button>
+    <button class="btn delete-avatar" *ngIf="humanoidDescNode.sn">
+      {{ "AVATARMANAGE.DELETE" | translate }}
+    </button>
   </div>
-  <div class="humanoid-assets-upload__rightbar">
+  <div class="avatar-assets-upload__rightbar">
     <i
       class="pi pi-question-circle"
       [ngxTippy]="myTooltip"
@@ -37,13 +40,13 @@
     </div>
     <ng-container *ngIf="slotConfigs">
       <ng-container *ngIf="isFront; else backSlots">
-        <div class="humanoid-assets-upload__content content-front">
+        <div class="avatar-assets-upload__content content-front">
           <ng-container *ngFor="let config of frontSlotConfigs">
             <ng-container *ngIf="!config.isHidden">
               <avatar-slot
                 [slotConfig]="config"
-                (onAssetSelect)="handleSlotAssetSelect($event)"
-                (onRemove)="handleSlotTakeoff($event)"
+                (onAssetSelect)="handleSelectSlotAsset($event)"
+                (onRemove)="handleTakeoffSlot($event)"
                 (onEmptyOverride)="handleEmptyOverride($event)"
                 (onRemoveBase)="handleRemoveBase($event)"
               ></avatar-slot>
@@ -52,13 +55,13 @@
         </div>
       </ng-container>
       <ng-template #backSlots>
-        <div class="humanoid-assets-upload__content content-back">
+        <div class="avatar-assets-upload__content content-back">
           <ng-container *ngFor="let config of backSlotConfigs">
             <ng-container *ngIf="!config.isHidden">
               <avatar-slot
                 [slotConfig]="config"
-                (onAssetSelect)="handleSlotAssetSelect($event)"
-                (onRemove)="handleSlotTakeoff($event)"
+                (onAssetSelect)="handleSelectSlotAsset($event)"
+                (onRemove)="handleTakeoffSlot($event)"
                 (onEmptyOverride)="handleEmptyOverride($event)"
                 (onRemoveBase)="handleRemoveBase($event)"
               ></avatar-slot>

@@ -9,6 +9,7 @@ import {
 import { map } from 'rxjs/operators';
 import PixowApi, { Avatar, SearchAvatarsParams } from 'pixow-api';
 import { AvatarModel } from './models/avatar.model';
+import { MessageService } from 'primeng/api';
 
 export interface GetAvatarsResponse {
   total: number;

@@ -14,7 +14,15 @@ import { Subscription } from 'rxjs';
 import { AvatarPreviewComponent } from '../avatar-preview/avatar-preview.component';
 import { MessageService } from 'primeng/api';
 import { SlotConfig, SlotConfigs } from 'src/app/models/slot.model';
-const imageToBlob = require('image-to-blob');
+import { HumanoidDescriptionNode } from 'game-capsule';
+import { WEB_RESOURCE_URI } from 'src/app/app.module';
+import {
+  FileService,
+  CloudStorageService,
+  UploadFileConfig,
+} from 'pixowor-core';
+import PixowApi from 'pixow-api';
+import { base64toBlob, blobToBase64 } from 'src/app/utils';
 const urlResolve = require('url-resolve-browser');
 
 export enum AvatarDir {
@@ -36,7 +44,7 @@ export class AvatarAssetsUploadComponent
 
   isFront = true;
 
-  humanoidDescNode: any;
+  humanoidDescNode: HumanoidDescriptionNode;
 
   readySubscription: Subscription = null;
 
@@ -55,27 +63,14 @@ export class AvatarAssetsUploadComponent
   constructor(
     public config: DynamicDialogConfig,
     private messageService: MessageService,
-    public cd: ChangeDetectorRef
+    public cd: ChangeDetectorRef,
+    private pixowApi: PixowApi,
+    private fileService: FileService,
+    private cloudStorageService: CloudStorageService,
+    @Inject(WEB_RESOURCE_URI) private webResourceUri: string
   ) {
     const { humanoidDescNode } = this.config.data;
     this.humanoidDescNode = humanoidDescNode;
-  }
-
-  private generateSlotConfigsWithHumanoidDescSlots(): SlotConfig[] {
-    const newSlotConfigs = JSON.parse(JSON.stringify(SlotConfigs));
-    for (const config of newSlotConfigs) {
-      const slot = this.humanoidDescNode.slots.find(
-        (item) => item.slot === config.slotName
-      );
-      if (slot) {
-        config.version = slot.version;
-        config.sn = slot.sn;
-        config.emptyOverride = slot.emptyOverride;
-        config.removeBase = slot.removeBase;
-      }
-    }
-
-    return newSlotConfigs;
   }
 
   async ngOnInit() {
@@ -98,9 +93,8 @@ export class AvatarAssetsUploadComponent
   }
 
   private initSlotConfigs(): Promise<any> {
-    // Generate slotConfigs with humanoidDescNode slots
-    const slotConfigs = this.generateSlotConfigsWithHumanoidDescSlots();
-    console.log('🚀 initSlotConfigs ~ slotConfigs', slotConfigs);
+    // Generate slotConfigs with humanoidDescNode default slots
+    const slotConfigs = this.generateSlotConfigsWithHumanoidDefauleSlots();
 
     const tasks: Promise<any>[] = [];
 
@@ -115,10 +109,7 @@ export class AvatarAssetsUploadComponent
         slot.slot
       );
 
-      const slotAssetUrl = urlResolve(
-        // this.pixoworCore.settings.WEB_RESOURCE_URI,
-        slotAssetKey
-      );
+      const slotAssetUrl = urlResolve(this.webResourceUri, slotAssetKey);
 
       tasks.push(this.loadSlotAsset(slotAssetUrl, slotConfig));
     }
@@ -128,19 +119,30 @@ export class AvatarAssetsUploadComponent
     });
   }
 
-  private loadSlotAsset(url: string, config: SlotConfig): Promise<SlotConfig> {
-    return new Promise((resolve, reject) => {
-      imageToBlob(url, (err, blob) => {
-        if (err) {
-          console.error(err);
-          config.imageBlob = null;
-          resolve(config);
-        } else {
-          config.imageBlob = blob;
-          resolve(config);
-        }
-      });
-    });
+  private generateSlotConfigsWithHumanoidDefauleSlots(): SlotConfig[] {
+    const newSlotConfigs = JSON.parse(JSON.stringify(SlotConfigs));
+    for (const config of newSlotConfigs) {
+      const slot = this.humanoidDescNode.slots.find(
+        (item) => item.slot === config.slotName
+      );
+      if (slot) {
+        config.version = slot.version;
+        config.sn = slot.sn;
+        config.emptyOverride = slot.emptyOverride;
+        config.removeBase = slot.removeBase;
+      }
+    }
+
+    return newSlotConfigs;
+  }
+
+  private async loadSlotAsset(
+    url: string,
+    config: SlotConfig
+  ): Promise<SlotConfig> {
+    const blob = await this.fileService.getFileBlob(url);
+    config.imageBlob = blob;
+    return config;
   }
 
   public previewHumanoidSlots() {
@@ -171,14 +173,14 @@ export class AvatarAssetsUploadComponent
     return this.slotConfigs.find((item) => item.slotName === slotName);
   }
 
-  public handleSlotAssetSelect(event): void {
+  public handleSelectSlotAsset(event): void {
     const { slotName, imageBlob } = event;
 
     const slotConfig = this.getSlotConfig(slotName);
     slotConfig.imageBlob = imageBlob;
 
     // preview avatar with slot
-    this.blobToBase64(imageBlob).then((imgData) => {
+    blobToBase64(imageBlob).then((imgData) => {
       const humanoidSlot: HumanoidSlot = {
         slot: slotConfig.slotName,
         version: slotConfig.version,
@@ -189,7 +191,7 @@ export class AvatarAssetsUploadComponent
     });
   }
 
-  handleSlotTakeoff(event): void {
+  handleTakeoffSlot(event): void {
     const { slotName } = event;
 
     const slotConfig = this.getSlotConfig(slotName);
@@ -236,53 +238,61 @@ export class AvatarAssetsUploadComponent
       });
   }
 
+  // 平台数据接口
+  // 1. 更新Avatar
+  // 2. 创建Avatar
   private saveToDB(): Promise<any> {
     if (this.humanoidDescNode.sn) {
       this.nextVersion = +this.humanoidDescNode.version + 1;
       return new Promise((resolve, reject) => {
-        // this.pixoworCore.pixowApi.avatar
-        //   .updateAvatar(this.humanoidDescNode.sn, {
-        //     name: this.humanoidDescNode.name,
-        //     version: this.nextVersion,
-        //   })
-        //   .then((res) => {
-        //     this.humanoidDescNode.version = this.nextVersion.toString();
-        //     resolve(this.humanoidDescNode);
-        //   })
-        //   .catch((err) => reject(err));
+        this.pixowApi
+          .updateAvatar({
+            id: this.humanoidDescNode.sn,
+            name: this.humanoidDescNode.name,
+            version: this.nextVersion,
+          })
+          .then((res) => {
+            this.humanoidDescNode.version = this.nextVersion.toString();
+            resolve(this.humanoidDescNode);
+          })
+          .catch((err) => reject(err));
       });
     } else {
       return new Promise((resolve, reject) => {
-        // this.pixoworCore.pixowApi.avatar
-        //   .createAvatar({
-        //     name: this.humanoidDescNode.name,
-        //     version: 1,
-        //     type: 'other', // TODO: dont need this type
-        //   })
-        //   .then((res) => {
-        //     this.humanoidDescNode.sn = res.data._id;
-        //     this.humanoidDescNode.version = '1';
-        //     resolve(this.humanoidDescNode);
-        //   })
-        //   .catch((err) => reject(err));
+        this.pixowApi
+          .createAvatar({
+            name: this.humanoidDescNode.name,
+            version: 1,
+            type: 'other', // TODO: dont need this type
+          })
+          .then((res) => {
+            this.humanoidDescNode.sn = res.data._id;
+            this.humanoidDescNode.version = '1';
+            resolve(this.humanoidDescNode);
+          })
+          .catch((err) => reject(err));
       });
     }
   }
 
+  // 序列化配置文件并上传
   private serializeAndUploadHumanoid(): Promise<any> {
     // generate humanoidDescNode slots from slotConfigs
 
     this.humanoidDescNode.slots = this.slotConfigs
-      // .filter((slotConfig) => {
-      //   if (
-      //     slotConfig.imageBlob ||
-      //     !!slotConfig.removeBase ||
-      //     !!slotConfig.emptyOverride
-      //   ) {
-      //     return slotConfig;
-      //   }
-      // })
+      .filter((slotConfig) => {
+        if (
+          slotConfig.imageBlob ||
+          !!slotConfig.removeBase ||
+          !!slotConfig.emptyOverride
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      })
       .map((slotConfig) => {
+        // 新建的avatar
         if (slotConfig.imageBlob) {
           slotConfig.sn = this.humanoidDescNode.sn;
           slotConfig.version = this.humanoidDescNode.version;
@@ -295,6 +305,7 @@ export class AvatarAssetsUploadComponent
             ...(slotConfig.removeBase && { removeBase: slotConfig.removeBase }),
           };
         } else {
+          // 更新的avatar
           return {
             slot: slotConfig.slotName,
             version: this.humanoidDescNode.version,
@@ -304,94 +315,49 @@ export class AvatarAssetsUploadComponent
         }
       });
 
-    console.log('slots: ', this.humanoidDescNode.slots);
-
     const buff = this.humanoidDescNode.serialize();
 
     const blob = new Blob([buff]);
-    const key = `avatar/${this.humanoidDescNode.sn}/${this.humanoidDescNode.version}/${this.humanoidDescNode.sn}.humanoid`;
+    const key = `avatar/${this.humanoidDescNode.sn}/${this.humanoidDescNode.version}/${this.humanoidDescNode.sn}.pi`;
     const file = new File([blob], key);
 
-    return Promise.resolve();
-
-    // const fileConfig: UploadFileConfig = {
-    //   file,
-    //   key,
-    // };
-
-    // return this.pixoworCore.uploadFile(fileConfig);
+    return this.cloudStorageService.uploadFile({
+      file,
+      key,
+    });
   }
 
+  // 上传所有槽位资源
   private uploadSlotAssets(): Promise<any> {
-    // const tasks: Promise<any>[] = [];
-    // const uploadFileConfigs: UploadFileConfig[] = this.slotConfigs
-    //   .filter((config) => config.imageBlob)
-    //   .map((config) => {
-    //     const key = `avatar/${config.sn}/${config.version}/${config.slotName}.png`;
-    //     const file = new File([config.imageBlob], key);
-    //     return {
-    //       file,
-    //       key,
-    //     };
-    //   });
-    // uploadFileConfigs.forEach((config) => {
-    //   tasks.push(this.pixoworCore.uploadFile(config));
-    // });
-    // return Promise.all(tasks);
-
-    return Promise.resolve();
+    const tasks: Promise<any>[] = [];
+    const uploadFileConfigs: UploadFileConfig[] = this.slotConfigs
+      .filter((config) => config.imageBlob)
+      .map((config) => {
+        const key = `avatar/${config.sn}/${config.version}/${config.slotName}.png`;
+        const file = new File([config.imageBlob], key);
+        return {
+          file,
+          key,
+        };
+      });
+    uploadFileConfigs.forEach((config) => {
+      tasks.push(this.cloudStorageService.uploadFile(config));
+    });
+    return Promise.all(tasks);
   }
 
+  // 生成封面图，并上传
   public generateAvatarThumbnailAndUpload(): Promise<any> {
     return this.avatarPreview.canvas.generateThumbnail().then((imageData) => {
-      console.log('Thumbnail: ', imageData);
       const key = `avatar/${this.humanoidDescNode.sn}/${this.humanoidDescNode.version}/thumbnail.png`;
 
       const thumbnailUploadFileConfig = {
         key,
-        file: new File([this.base64toBlob(imageData)], key),
+        file: new File([base64toBlob(imageData)], key),
       };
 
-      // return this.pixoworCore.uploadFile(thumbnailUploadFileConfig);
-      return Promise.resolve();
+      return this.cloudStorageService.uploadFile(thumbnailUploadFileConfig);
     });
-  }
-
-  private base64toBlob(base64Data, contentType?) {
-    if (base64Data.indexOf(',') >= 0) {
-      base64Data = base64Data.substring(base64Data.indexOf(',') + 1);
-    }
-
-    contentType = contentType || '';
-    const sliceSize = 1024;
-    const byteCharacters = atob(base64Data);
-    const bytesLength = byteCharacters.length;
-    const slicesCount = Math.ceil(bytesLength / sliceSize);
-    const byteArrays = new Array(slicesCount);
-
-    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-      const begin = sliceIndex * sliceSize;
-      const end = Math.min(begin + sliceSize, bytesLength);
-
-      const bytes = new Array(end - begin);
-      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-        bytes[i] = byteCharacters[offset].charCodeAt(0);
-      }
-      byteArrays[sliceIndex] = new Uint8Array(bytes);
-    }
-    return new Blob(byteArrays, { type: contentType });
-  }
-
-  private blobToBase64(blob) {
-    return new Promise((resolve, _) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  public closeTooltip(): void {
-    this.myTooltip.close();
   }
 
   ngOnDestroy(): void {

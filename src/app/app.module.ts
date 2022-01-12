@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { InjectionToken, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -26,8 +26,8 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { NgxTippyModule } from 'ngx-tippy-wrapper';
 import PixowApi from 'pixow-api';
-import { ImageService } from 'pixowor-core';
 import { AppService } from './app.service';
+import { MessageService } from 'primeng/api';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -40,6 +40,8 @@ function initPixowApi() {
   );
   return pixowApi;
 }
+
+export const WEB_RESOURCE_URI = new InjectionToken('WEB_RESOURCE_URI');
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,7 +78,8 @@ function initPixowApi() {
   ],
   providers: [
     AppService,
-    ImageService,
+    MessageService,
+    { provide: WEB_RESOURCE_URI, useValue: 'https://osd-alpha.tooqing.com' },
     { provide: PixowApi, useFactory: initPixowApi },
   ],
   bootstrap: [AppComponent],

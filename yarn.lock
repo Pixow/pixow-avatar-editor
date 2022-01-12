@@ -1146,6 +1146,14 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
+"@babel/runtime-corejs2@^7.10.2":
+  version "7.16.7"
+  resolved "https://registry.npmmirror.com/@babel/runtime-corejs2/download/@babel/runtime-corejs2-7.16.7.tgz#29c694e0eead3ae1cf3f788e026c808835ce45db"
+  integrity sha512-ec0BM0J/9M5Cncha++AlgvvDlk+uM+m6f7K0t74ClcYzsE8LgX4RstRreksMSCI82o3LJS//UswmA0pUWkJpqg==
+  dependencies:
+    core-js "^2.6.5"
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@7.16.3":
   version "7.16.3"
   resolved "https://registry.npmmirror.com/@babel/runtime/download/@babel/runtime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
@@ -2275,6 +2283,11 @@ core-js@3.19.3:
   version "3.19.3"
   resolved "https://registry.npmmirror.com/core-js/download/core-js-3.19.3.tgz#6df8142a996337503019ff3235a7022d7cdf4559"
   integrity sha512-LeLBMgEGSsG7giquSzvgBrTS7V5UL6ks3eQlUSbN8dJStlLFiRzUm5iqsRyzUB8carhfKjkJ2vzKqE6z1Vga9g==
+
+core-js@^2.6.5:
+  version "2.6.12"
+  resolved "https://registry.npmmirror.com/core-js/download/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 core-util-is@~1.0.0:
   version "1.0.3"
@@ -4679,11 +4692,19 @@ piscina@3.1.0:
   optionalDependencies:
     nice-napi "^1.0.2"
 
-pixowor-core@../pixowor-core/dist/pixowor-core/pixowor-core-0.0.2.tgz:
-  version "0.0.2"
-  resolved "../pixowor-core/dist/pixowor-core/pixowor-core-0.0.2.tgz#3fe2a76a0a859993eddb695803e4eaada6219a17"
+pixowor-core@../pixowor-core/dist/pixowor-core/pixowor-core-0.0.3.tgz:
+  version "0.0.3"
+  resolved "../pixowor-core/dist/pixowor-core/pixowor-core-0.0.3.tgz#157751897978938231584b81767b24ca1003b580"
   dependencies:
     dexie "^3.2.0"
+    tslib "^2.3.0"
+
+pixowor-core@../pixowor-core/dist/pixowor-core/pixowor-core-0.0.4.tgz:
+  version "0.0.4"
+  resolved "../pixowor-core/dist/pixowor-core/pixowor-core-0.0.4.tgz#1aeb742bb0a2dc6bf74c7e669450242367ccc8bf"
+  dependencies:
+    dexie "^3.2.0"
+    qiniu-js "^3.4.0"
     tslib "^2.3.0"
 
 pkg-dir@^4.1.0:
@@ -5134,6 +5155,15 @@ punycode@^2.1.0:
   resolved "https://registry.nlark.com/punycode/download/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha1-tYsBCsQMIsVldhbI0sLALHv0eew=
 
+qiniu-js@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.npmmirror.com/qiniu-js/download/qiniu-js-3.4.0.tgz#36980de07be4bab229ec0193a32c3318aa24b748"
+  integrity sha1-NpgN4HvkurIp7AGToywzGKokt0g=
+  dependencies:
+    "@babel/runtime-corejs2" "^7.10.2"
+    querystring "^0.2.1"
+    spark-md5 "^3.0.0"
+
 qjobs@^1.2.0:
   version "1.2.0"
   resolved "https://registry.nlark.com/qjobs/download/qjobs-1.2.0.tgz#c45e9c61800bd087ef88d7e256423bdd49e5d071"
@@ -5148,6 +5178,11 @@ querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.npmmirror.com/querystring/download/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha512-X/xY82scca2tau62i9mDyU9K+I+djTMUsvwf7xnUX5GLvVzgJybOJf4Y6o9Zx3oJK/LSXg5tTZBjwzqVPaPO2g==
+
+querystring@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.npmmirror.com/querystring/download/querystring-0.2.1.tgz#40d77615bb09d16902a85c3e38aa8b5ed761c2dd"
+  integrity sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg==
 
 queue-microtask@^1.2.2:
   version "1.2.3"
@@ -5714,6 +5749,11 @@ sourcemap-codec@1.4.8, sourcemap-codec@^1.4.4, sourcemap-codec@^1.4.8:
   version "1.4.8"
   resolved "https://registry.nlark.com/sourcemap-codec/download/sourcemap-codec-1.4.8.tgz#ea804bd94857402e6992d05a38ef1ae35a9ab4c4"
   integrity sha1-6oBL2UhXQC5pktBaOO8a41qatMQ=
+
+spark-md5@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.npmmirror.com/spark-md5/download/spark-md5-3.0.2.tgz#7952c4a30784347abcee73268e473b9c0167e3fc"
+  integrity sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==
 
 spdy-transport@^3.0.0:
   version "3.0.0"
