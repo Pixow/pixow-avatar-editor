@@ -10,7 +10,7 @@
       name="myfile[]"
       accept="image/*"
       [maxFileSize]="1000000"
-      [chooseLabel]="slotConfig.name"
+      chooseLabel="{{slotConfig.name | translate}}"
       (onSelect)="selectFile($event)"
     >
     </p-fileUpload>

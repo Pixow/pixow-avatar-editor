@@ -1,4 +1,9 @@
-import { InjectionToken, NgModule } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  InjectionToken,
+  Injector,
+  NgModule,
+} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,8 +27,12 @@ import { AvatarPreviewComponent } from 'src/app/components/avatar-preview/avatar
 import { DateAgoPipe } from 'src/app/pipes/date-ago.pipe';
 
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
+import {
+  TranslateLoader,
+  TranslateModule,
+  TranslateService,
+} from '@ngx-translate/core';
+import { CommonModule, LOCATION_INITIALIZED } from '@angular/common';
 import { NgxTippyModule } from 'ngx-tippy-wrapper';
 import PixowApi from 'pixow-api';
 import { AppService } from './app.service';
@@ -33,12 +42,43 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
-function initPixowApi() {
+export function initPixowApi() {
   const pixowApi = new PixowApi();
   pixowApi.setTokenHeader(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjYWFmZDgxZWI4MmE4NmY2YTM0YTJlMiIsInJvbGUiOjAsImNyZWRlbnRpYWwiOiJNb3ppbGxhLzUuMCAoTWFjaW50b3NoOyBJbnRlbCBNYWMgT1MgWCAxMF8xNV83KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvOTYuMC40NjY0LjExMCBTYWZhcmkvNTM3LjM2IiwiaWF0IjoxNjQwMjQxODIzLCJleHAiOjE2NDI4NjgzODN9.oZ7jJjRgdpbm5ymDAG3O3VWqJe8casBhpFK6DLvAcXg'
   );
   return pixowApi;
+}
+
+// https://github.com/ngx-translate/core/issues/517
+export function appInitializerFactory(
+  translate: TranslateService,
+  injector: Injector
+) {
+  return () =>
+    new Promise<any>((resolve: any) => {
+      const locationInitialized = injector.get(
+        LOCATION_INITIALIZED,
+        Promise.resolve(null)
+      );
+      locationInitialized.then(() => {
+        const langToSet = 'zh-CN';
+        translate.setDefaultLang('zh-CN');
+        translate.use(langToSet).subscribe(
+          () => {
+            console.info(`Successfully initialized '${langToSet}' language.'`);
+          },
+          (err) => {
+            console.error(
+              `Problem with '${langToSet}' language initialization.'`
+            );
+          },
+          () => {
+            resolve(null);
+          }
+        );
+      });
+    });
 }
 
 export const WEB_RESOURCE_URI = new InjectionToken('WEB_RESOURCE_URI');
@@ -66,7 +106,6 @@ export const WEB_RESOURCE_URI = new InjectionToken('WEB_RESOURCE_URI');
     InputTextModule,
     ToastModule,
     TranslateModule.forRoot({
-      useDefaultLang: true,
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
@@ -81,6 +120,12 @@ export const WEB_RESOURCE_URI = new InjectionToken('WEB_RESOURCE_URI');
     MessageService,
     { provide: WEB_RESOURCE_URI, useValue: 'https://osd-alpha.tooqing.com' },
     { provide: PixowApi, useFactory: initPixowApi },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFactory,
+      deps: [TranslateService, Injector],
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })

@@ -38,9 +38,7 @@ interface SortOption {
   styleUrls: ['./app.component.scss'],
   providers: [DialogService],
 })
-export class AppComponent implements OnInit, OnDestroy {
-  loadLangSuccess = false;
-
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   keyword = '';
   page = 1;
   pageSize = 25;
@@ -54,10 +52,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   total = 0;
   avatarsResponse$: Observable<GetAvatarsResponse>;
-  sortOptions: SortOption[] = [
-    { name: 'Created Date(recent to past)', value: '-createdAt' },
-    { name: 'Created Date(past to recent)', value: 'createdAt' },
-  ];
+  sortOptions: SortOption[];
+  // sortOptions: SortOption[] = [
+  //   { name: 'Created Date(recent to past)', value: '-createdAt' },
+  //   { name: 'Created Date(past to recent)', value: 'createdAt' },
+  // ];
+
   selectedSortOption: SortOption;
 
   first = 0; // Every search list first item sequence
@@ -76,15 +76,40 @@ export class AppComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private dialog: DialogService
   ) {
-    this.translate.setDefaultLang('en');
-    this.translate.use('en').subscribe((data) => {
-      this.loadLangSuccess = true;
-    });
+    // .subscribe(() => {
+    //   this.sortOptions = [
+    //     {
+    //       name: this.translate.instant('AVATARMANAGE.SORT_REVERSE'),
+    //       value: '-createdAt',
+    //     },
+    //     {
+    //       name: this.translate.instant('AVATARMANAGE.SORT_POSITIVE'),
+    //       value: 'createdAt',
+    //     },
+    //   ];
+    // });
   }
 
   ngOnInit(): void {
     this.setupDataListenners();
     this.initCategories();
+  }
+
+  ngAfterViewInit(): void {
+    this.translate.get('AVATARMANAGE.SORT_REVERSE').subscribe((data) => {
+      console.log(data);
+    });
+
+    this.sortOptions = [
+      {
+        name: this.translate.instant('AVATARMANAGE.SORT_REVERSE'),
+        value: '-createdAt',
+      },
+      {
+        name: this.translate.instant('AVATARMANAGE.SORT_POSITIVE'),
+        value: 'createdAt',
+      },
+    ];
   }
 
   private setupDataListenners() {

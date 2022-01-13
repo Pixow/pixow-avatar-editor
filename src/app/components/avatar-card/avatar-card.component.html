@@ -8,7 +8,7 @@
       <div class="avatar-card__author">
         <span>{{ avatar.owner.nickname }}</span>
         <i></i>
-        <span>{{ avatar.createdAt | dateAgo }}</span>
+        <span>{{ avatar.createdAt | dateAgo: lang }}</span>
       </div>
     </div>
     <h3>{{ avatar.type }}</h3>

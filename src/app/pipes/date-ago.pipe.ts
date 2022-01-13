@@ -24,22 +24,20 @@ export class DateAgoPipe implements PipeTransform {
 
     en: {
       JUST_NOW: 'Just now',
-      YEAR: '年',
-      MONTH: '月',
-      WEEK: '周',
-      DAY: '天',
-      HOUR: '小时',
-      MINUTE: '分钟',
-      SECOND: '秒',
-      AGE: 'ago',
+      YEAR: 'year',
+      MONTH: 'month',
+      WEEK: 'week',
+      DAY: 'day',
+      HOUR: 'hour',
+      MINUTE: 'minute',
+      SECOND: 'second',
+      AGO: ' ago',
       SAGO: 's ago',
     },
   };
 
-  transform(value: any, args?: any): any {
+  transform(value: any, lang: string = 'en'): any {
     if (value) {
-      // const lang = this.pixoworCore.settings.lang;
-      const lang = 'zh-CN';
       const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
       if (seconds < 29) {
         return this.translateObjs[lang].JUST_NOW;
@@ -61,6 +59,7 @@ export class DateAgoPipe implements PipeTransform {
         counter = Math.floor(seconds / intervals[i]);
         if (counter > 0) {
           if (counter === 1) {
+            console.log(this.translateObjs[lang]);
             return (
               counter +
               ' ' +

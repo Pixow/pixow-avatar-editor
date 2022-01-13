@@ -7,9 +7,11 @@ import {
   Input,
   NgZone,
   OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 import { Capsule, HumanoidDescriptionNode } from 'game-capsule';
 import { FileService } from 'pixowor-core';
 import { MessageService } from 'primeng/api';
@@ -28,7 +30,7 @@ const urlResolve = require('url-resolve-browser');
   styleUrls: ['./avatar-card.component.scss'],
   providers: [DialogService],
 })
-export class AvatarCardComponent implements AfterViewInit, OnDestroy {
+export class AvatarCardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() avatar: AvatarModel;
 
   @Output() onDressup = new EventEmitter();
@@ -37,6 +39,8 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
 
   private imgObjectUrl: string;
 
+  lang: string;
+
   constructor(
     public dialogService: DialogService,
     public appService: AppService,
@@ -44,18 +48,12 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
     public sanitizer: DomSanitizer,
     public messageService: MessageService,
     public zone: NgZone,
+    private translate: TranslateService,
     @Inject(WEB_RESOURCE_URI) private webResourceUri: string
   ) {}
 
-  get avatarCoverUrl() {
-    return urlResolve(this.webResourceUri, this.avatar.cover);
-  }
-
-  get avatarConfigFileUrl() {
-    return new URL(
-      `avatar/${this.avatar._id}/${this.avatar.version}/${this.avatar._id}.pi`,
-      this.webResourceUri
-    ).toString();
+  ngOnInit(): void {
+    this.lang = this.translate.getDefaultLang();
   }
 
   async ngAfterViewInit() {
@@ -68,6 +66,17 @@ export class AvatarCardComponent implements AfterViewInit, OnDestroy {
     );
 
     this.avatarCover$ = of(safeImgUrl);
+  }
+
+  get avatarCoverUrl() {
+    return urlResolve(this.webResourceUri, this.avatar.cover);
+  }
+
+  get avatarConfigFileUrl() {
+    return new URL(
+      `avatar/${this.avatar._id}/${this.avatar.version}/${this.avatar._id}.pi`,
+      this.webResourceUri
+    ).toString();
   }
 
   tryDressup(): void {

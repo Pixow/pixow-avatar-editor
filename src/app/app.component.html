@@ -14,9 +14,11 @@
     <div class="avatar-manage__rightbar">
       <div class="avatar-manage__rightbar-top">
         <h3 class="current-page-report">
-          ITEMS {{ first + 1 }} TO
-          {{ first + avatarsResponse.avatars.length }} OF
-          {{ avatarsResponse.total }} TOTAL
+          {{ "AVATARMANAGE.ITEMS" | translate }} {{ first + 1 }}
+          {{ "AVATARMANAGE.TO" | translate }}
+          {{ first + avatarsResponse.avatars.length }}
+          {{ "AVATARMANAGE.OF" | translate }} {{ avatarsResponse.total }}
+          {{ "AVATARMANAGE.TOTAL" | translate }}
         </h3>
 
         <div class="avatar-manage__filters">
@@ -27,7 +29,9 @@
                 name="search"
                 [(ngModel)]="keyword"
                 pInputText
-                placeholder="Search Avatars With Name Or Id"
+                placeholder="{{
+                  'AVATARMANAGE.SEARCH_PLACEHOLDER' | translate
+                }}"
               />
               <button
                 type="button"
@@ -40,7 +44,7 @@
             </div>
           </div>
           <div class="avatar-manage__sorts">
-            <span>SORT BY:</span>
+            <span>{{ "AVATARMANAGE.SORT_LABEL" | translate }}</span>
             <p-dropdown
               [options]="sortOptions"
               [(ngModel)]="selectedSortOption"
